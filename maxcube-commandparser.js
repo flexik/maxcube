@@ -199,8 +199,8 @@ function decodeDevice (payload) {
   var deviceType = undefined;
   switch (payload[0]) {
     case 8: deviceType = EQ3MAX_DEV_TYPE_PUSH_BUTTON; break;
-    case 11: deviceType = EQ3MAX_DEV_TYPE_THERMOSTAT; deviceStatus = decodeDeviceThermostat (payload); break;
-    case 12: deviceType = EQ3MAX_DEV_TYPE_WALLTHERMOSTAT; break;
+    case 11: deviceType = EQ3MAX_DEV_TYPE_THERMOSTAT; deviceStatus = decodeDeviceThermostat (payload, false); break;
+    case 12: deviceType = EQ3MAX_DEV_TYPE_WALLTHERMOSTAT; deviceStatus = decodeDeviceThermostat (payload, true); break;
     default: deviceType = EQ3MAX_DEV_TYPE_UNKNOWN; break;
   }
 
@@ -209,7 +209,7 @@ function decodeDevice (payload) {
   return deviceStatus;
 }
 
-function decodeDeviceThermostat (payload) {
+function decodeDeviceThermostat (payload, wallThermostat) {
   /*
     source: http://www.domoticaforum.eu/viewtopic.php?f=66&t=6654
     Start Length  Value       Description
@@ -276,6 +276,9 @@ function decodeDeviceThermostat (payload) {
       deviceStatus.time_until = ('00' + Math.floor(hours)).substr(-2) + ':' + ((hours % 1) ? "30" : "00");
     } else {
       deviceStatus.temp = (payload[9]?25.5:0) + payload[10] / 10;
+      if (wallThermostat) {
+        deviceStatus.actual_temp = payload[11];
+      }
     }
 
     return deviceStatus;
