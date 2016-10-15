@@ -276,9 +276,10 @@ function decodeDeviceThermostat (payload, wallThermostat) {
       deviceStatus.time_until = ('00' + Math.floor(hours)).substr(-2) + ':' + ((hours % 1) ? "30" : "00");
     } else {
       deviceStatus.temp = (payload[9]?25.5:0) + payload[10] / 10;
-      if (wallThermostat) {
-        deviceStatus.actual_temp = payload[11];
-      }
+    }
+
+    if (wallThermostat) {
+      deviceStatus.actual_temp = payload[12] / 10.0;
     }
 
     return deviceStatus;
